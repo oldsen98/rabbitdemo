@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbie="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:rabbitmq.properties" />
+
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbitmq.host}" port="${rabbitmq.port}"
+                               username="${rabbitmq.username}" password="${rabbitmq.password}"
+                               virtual-host="${rabbitmq.virtual-host}" />
+    <rabbie:admin connection-factory="connectionFactory" />
+
+    <rabbit:queue id="spring_topic_queue_star" name="spring_topic_queue_star" auto-declare="true"/>
+    <rabbit:queue id="spring_topic_queue_well" name="spring_topic_queue_well" auto-declare="true"/>
+    <rabbit:queue id="spring_topic_queue_well2" name="spring_topic_queue_well2" auto-declare="true"/>
+
+    <rabbit:topic-exchange name="spring_topic_exchange" id="spring_topic_exchange" auto-declare="true">
+        <rabbit:bindings>
+            <rabbit:binding pattern="sensne.*" queue="spring_topic_queue_star" />
+            <rabbit:binding pattern="sensne.#" queue="spring_topic_queue_well" />
+            <rabbit:binding pattern="sen.#" queue="spring_topic_queue_well2" />
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+
+    <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" />
+</beans>

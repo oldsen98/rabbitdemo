@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+
+    <context:property-placeholder location="classpath:rabbitmq.properties"/>
+
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbitmq.host}" port="${rabbitmq.port}"
+                               username="${rabbitmq.username}" password="${rabbitmq.password}"
+                               virtual-host="${rabbitmq.virtual-host}"
+                               publisher-confirms="true" publisher-returns="true" />
+    <rabbit:admin connection-factory="connectionFactory" />
+    <rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" />
+
+    <rabbit:queue id="test_queue_confirm" name="test_queue_confirm" auto-declare="true" />
+    <rabbit:direct-exchange name="test_exchange_confirm" auto-declare="true">
+        <rabbit:bindings>
+            <rabbit:binding queue="test_queue_confirm" key="confirm"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+
+
+
+
+
+
+</beans>
